@@ -1,7 +1,10 @@
 package net.duy.glistening;
 
 import com.mojang.logging.LogUtils;
+import net.duy.glistening.item.GlisteningItems;
+import net.duy.glistening.tabs.CreativeItemTab;
 import net.minecraft.client.Minecraft;
+import net.minecraft.world.item.CreativeModeTabs;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.BuildCreativeModeTabContentsEvent;
@@ -27,6 +30,13 @@ public class GlisteningMod
 
     public GlisteningMod() {
         IEventBus modEventBus = FMLJavaModLoadingContext.get().getModEventBus();
+
+        // Define mod items class
+        GlisteningItems.register(modEventBus);
+
+        // Define creative tab
+        CreativeItemTab.register(modEventBus);
+
         modEventBus.addListener(this::commonSetup);
         MinecraftForge.EVENT_BUS.register(this);
         modEventBus.addListener(this::addCreative);
@@ -38,12 +48,16 @@ public class GlisteningMod
 
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
+
+        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS)
+            event.accept(GlisteningItems.BEAR);
+
+
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
-    public void onServerStarting(ServerStartingEvent event)
-    {
+    public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
     }
